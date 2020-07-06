@@ -1,0 +1,13 @@
+---
+    - hosts: localhost  
+      tasks:
+
+      - name: Create AWS EC2 Instance
+        ec2:
+          key_name: keyname_here
+          instance_type: t2.micro
+          image: ami-032598fcc7e9d1c7a
+          wait: yes
+          group: default
+          count: 1
+          region: eu-west-2
