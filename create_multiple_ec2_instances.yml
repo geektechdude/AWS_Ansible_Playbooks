@@ -1,0 +1,28 @@
+---
+    - hosts: localhost  
+      tasks:
+
+      - name: Create AWS EC2 Instances
+        ec2:
+          key_name: KEY_PAIR_NAME_HERE
+          instance_type: t2.micro
+          image: ami-032598fcc7e9d1c7a
+          wait: yes
+          group: default
+          count: 2
+          region: eu-west-2
+        register: ec2
+
+      - name: Add EC2 Instances To Host Group
+        add_host:
+          hostname: "{{ item.public_ip }}"
+          groupname: geektechstuff_ec2
+        loop: "{{ ec2.instances }}"
+
+      - name: Tag EC2 Instances
+        ec2_tag:
+          resource: "{{ item.id }}"
+          tags:
+            env: geek_dev
+            purpose: testing
+        loop: "{{ ec2.instances }}"
