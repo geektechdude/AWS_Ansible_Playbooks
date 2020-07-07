@@ -1,0 +1,32 @@
+---
+    - name: Install Java Runtime Environment
+      yum:
+        name: java-1.8.0-openjdk
+        state: present
+
+    - name: Download Kibana Yum Package
+      get_url:
+        url: https://artifacts.elastic.co/downloads/kibana/kibana-7.6.2-x86_64.rpm
+        dest: /tmp
+
+    - name: Install Kibana Yum Package
+      yum:
+        name: /tmp/kibana-7.6.2-x86_64.rpm
+        state: present
+    
+    - name: Update Kibana Config (IP Address)
+      lineinfile:
+         destfile: /etc/kibana/kibana.yml
+         regexp: 'server.host'
+         line: 'server.host: "0.0.0.0"'
+      
+    - name: Update Kibana Config (Kibana URL)
+      lineinfile:
+         destfile: /etc/kibana/kibana.yml
+         regexp: 'elasticsearch.hosts'
+         line: 'elasticsearch.hosts: ["http:// :9200"]'
+      
+    - name: Start Kibana Service
+      systemd:
+        name: kibana
+        state: started

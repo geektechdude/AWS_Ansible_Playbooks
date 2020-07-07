@@ -1,0 +1,106 @@
+---
+    - hosts: localhost  
+      tasks:
+
+      - name: Create AWS EC2 Instances - Elastic
+        ec2:
+          key_name: aws_ssh_private_key_name_here
+          instance_type: t2.small
+          image: ami-032598fcc7e9d1c7a
+          wait: yes
+          group: default
+          count: 1
+          region: eu-west-2
+        register: elastic
+
+      - name: Add EC2 Instances To Host Group - Elastic
+        add_host:
+          hostname: "{{ item.public_ip }}"
+          groupname: geektechstuff_elastic
+        loop: "{{ elastic.instances }}"
+
+      - name: Tag EC2 Instances - Elastic
+        ec2_tag:
+          resource: "{{ item.id }}"
+          tags:
+            env: geek_dev_ELK
+            purpose: testing_ELK
+        loop: "{{ elastic.instances }}"
+
+      - name: Create AWS EC2 Instances - Kibana
+        ec2:
+          key_name: aws_ssh_private_key_name_here
+          instance_type: t2.small
+          image: ami-032598fcc7e9d1c7a
+          wait: yes
+          group: default
+          count: 1
+          region: eu-west-2
+        register: kibana
+
+      - name: Add EC2 Instances To Host Group - Kibana
+        add_host:
+          hostname: "{{ item.public_ip }}"
+          groupname: geektechstuff_kibana
+        loop: "{{ kibana.instances }}"
+
+      - name: Tag EC2 Instances - kibana
+        ec2_tag:
+          resource: "{{ item.id }}"
+          tags:
+            env: geek_dev_ELK
+            purpose: testing_ELK
+        loop: "{{ kibana.instances }}"
+
+      
+      - name: Create AWS EC2 Instances - Logstash
+        ec2:
+          key_name: aws_ssh_private_key_name_here
+          instance_type: t2.small
+          image: ami-032598fcc7e9d1c7a
+          wait: yes
+          group: default
+          count: 1
+          region: eu-west-2
+        register: logstash
+
+      - name: Add EC2 Instances To Host Group - Logstash
+        add_host:
+          hostname: "{{ item.public_ip }}"
+          groupname: geektechstuff_logstash
+        loop: "{{ logstash.instances }}"
+
+      - name: Tag EC2 Instances - Logstash
+        ec2_tag:
+          resource: "{{ item.id }}"
+          tags:
+            env: geek_dev_ELK
+            purpose: testing_ELK
+        loop: "{{ logstash.instances }}"
+      
+      - pause:
+          minutes: 3
+
+    - name: Elastic
+      hosts: geektechstuff_elastic
+      remote_user: ec2-user
+      become: True
+      gather_facts: True
+      roles:
+        - elastic
+      
+    - name: Kibana
+      hosts: geektechstuff_kibana
+      remote_user: ec2-user
+      become: True
+      gather_facts: True
+      roles:
+        - kibana
+      
+    - name: Logstash
+      hosts: geektechstuff_logstash
+      remote_user: ec2-user
+      become: True
+      gather_facts: True
+      roles:
+        - logstash

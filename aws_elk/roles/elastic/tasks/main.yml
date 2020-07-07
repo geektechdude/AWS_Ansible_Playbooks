@@ -1,0 +1,43 @@
+---
+    - name: Install Java Runtime Environment
+      yum:
+        name: java-1.8.0-openjdk
+        state: present
+
+    - name: Download Elastic Yum Package
+      get_url:
+        url: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.8.0-x86_64.rpm
+        dest: /tmp
+
+    - name: Install Elastic Yum Package
+      yum:
+        name: /tmp/elasticsearch-7.8.0-x86_64.rpm
+        state: present
+    
+    - name: Update Elastic Config (IP Address to 0.0.0.0)
+      lineinfile:
+        destfile: /etc/elasticsearch/elasticsearch.yml
+        regexp: 'network.host'
+        line: 'network.host: 0.0.0.0'
+      
+    - name: Updating Elastic Config (Port Number)
+      lineinfile:
+        destfile: /etc/elasticsearch/elasticsearch.yml
+        regexp: 'http.port'
+        line: 'http.port: 9200'
+      
+    - name: Updating Elastic Config (Node Name)
+      lineinfile:
+        destfile: /etc/elasticsearch/elasticsearch.yml
+        regexp: '#node.name: node-1'
+        line: 'node.name: node-1'
+        
+    - name: Updating Elastic Config (Cluster Initial Master Nodes)
+      lineinfile:
+        destfile: /etc/elasticsearch/elasticsearch.yml
+        line: 'cluster.initial_master_nodes: ["node-1"]'   
+        
+    - name: Start ElasticSearch Service
+      systemd:
+        name: elasticsearch
+        state: started
