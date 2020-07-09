@@ -1,0 +1,23 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Create centos folder
+      file:
+        path: /test_centos
+        state: directory
+      when: ansible_facts['distribution']=="CentOS"
+ 
+    - name: Create ubuntu folder
+      file:
+        path: /test_ubuntu
+        state: directory
+      when: ansible_facts['distribution']=="Ubuntu"
+
+    - name: Create debian folder
+      file:
+        path: /test_debian
+        state: directory
+      when: ansible_facts['distribution']=="Debian"
