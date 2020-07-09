@@ -8,3 +8,6 @@ https://geektechstuff.com/2020/07/06/using-ansible-with-aws-creating-ec2-instanc
 
 create_multiple_ec2_instances.yml and aws_elk
 https://geektechstuff.com/2020/07/07/using-ansible-with-aws-creating-multiple-ec2-instances-tagging-them-and-elk-aws-ansible/
+
+ansible_when_example.yml
+https://geektechstuff.com/2020/07/09/changing-ansible-playbook-depending-on-operating-system-ansible/
